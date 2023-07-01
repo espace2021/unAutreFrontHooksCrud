@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Box,Button , TextField , MenuItem ,FormControl} from '@mui/material';
+import {Box,Button,TextField , MenuItem ,FormControl} from '@mui/material';
 import axios from "axios";
 
 const CreateProduct = ({ addProduct, scategories }) => {
@@ -12,7 +12,7 @@ const CreateProduct = ({ addProduct, scategories }) => {
   const [imageart, setImageart] = useState("");
   const [scategorieID, setScategorieID] = useState("");
 
-  const URL = "http://localhost:3001/api/articles"
+  const URL = "http://localhost:3001/api/"
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,11 +27,13 @@ const CreateProduct = ({ addProduct, scategories }) => {
     };
   
 //faire le add dans la BD
-axios.post(URL,newProduct)  
+axios.post(URL+"articles",newProduct)  
 .then(res => {  
 const response = res.data;  
 console.log(response)
+   // faire le add dans le tableau affiché
     addProduct(newProduct);
+    //vider le form
     setReference('');
     setDesignation('');
     setPrix('');
@@ -48,7 +50,7 @@ console.log(response)
     <div>
       <h2>Create Product</h2>
       <center>
-      <Box style={{width:"60%"}}>
+      <Box style={{width:"50%"}}>
       <FormControl  > 
             <TextField
                           variant="outlined"

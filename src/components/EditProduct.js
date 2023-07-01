@@ -1,21 +1,40 @@
-import React, { useState } from 'react';
-import {Button , TextField , MenuItem ,FormControl} from '@mui/material';
-
+import React, { useState, useEffect,useCallback } from 'react';
+import {Box,Button , TextField , MenuItem ,FormControl} from '@mui/material';
+import axios from "axios";
 
 const EditProduct = ({ product, updateProduct ,scategories}) => {
 
-  const [reference, setReference] = useState(product.reference);
-  const [designation, setDesignation] = useState(product.designation);
-  const [prix, setPrix] = useState(product.prix);
-  const [marque, setMarque] = useState(product.marque);
-  const [qtestock, setQtestock] = useState(product.qtestock);
-  const [imageart, setImageart] = useState(product.imageart);
-  const [scategorieID, setScategorieID] = useState(product.scategorieID);
+  const [_id,setId] = useState();
+  const [reference, setReference] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [prix, setPrix] = useState("");
+  const [marque, setMarque] = useState("");
+  const [qtestock, setQtestock] = useState("");
+  const [imageart, setImageart] = useState("");
+  const [scategorieID, setScategorieID] = useState("");
+
+  const fetchEditArticle = useCallback(async () => {
+    setId(product._id)
+    setReference(product.reference);
+    setDesignation(product.designation);
+    setPrix(product.prix);
+    setMarque(product.marque);
+    setQtestock(product.qtestock);
+    setImageart(product.imageart);
+    setScategorieID(product.scategorieID._id);
+  }, [product]);
+
+  useEffect(() => {
+    fetchEditArticle();
+  }, [fetchEditArticle]);
+
+  const URL = "http://localhost:3001/api/"
 
    const handleSubmit = (e) => {
     e.preventDefault();
     const updatedProduct = {
       ...product,
+      _id,
       reference,
       designation,
       prix, 
@@ -24,12 +43,30 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
       imageart,
       scategorieID
     };
-    updateProduct(updatedProduct);
+   
+     //update dans la BD
+     axios.put(URL + 'articles/' + product._id, updatedProduct)
+     .then(res => {  
+       console.log(res.data); 
+       //update dans le tableau affiché
+       updateProduct(updatedProduct); 
+        //vider le form
+      //  setId('')
+    setReference('');
+    setDesignation('');
+    setPrix('');
+    setMarque('');
+    setQtestock('');
+    setImageart('');
+    setScategorieID('');
+     }) .catch((err) => {alert(err)})
   };
 
   return (
     <div>
       <h2>Edit Product</h2>
+      <center>
+      <Box style={{width:"50%"}}>
       <FormControl  > 
             <TextField
                           variant="outlined"
@@ -111,6 +148,9 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
           <div>
          <Button variant="contained" color="success" onClick={(event)=>handleSubmit(event)}>Modifier</Button>
           </div>
+          
+          </Box>
+          </center>
     </div>
   );
 };

@@ -10,10 +10,11 @@ const ProductApp = () => {
   const [scategories, setScategories] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
 
+  
   const URL = "http://localhost:3001/api/"
 
   
-    const fetchArticles = useCallback(async () => {
+   const fetchArticles = useCallback(async () => {
         try {
           const response = await axios.get(URL+"articles"); 
           setProducts(response.data);
@@ -37,26 +38,40 @@ const ProductApp = () => {
       }, [fetchArticles,fetchScategories]);
 
   const addProduct = (newProduct) => {
-    setProducts([...products, newProduct]);
+    // le nouveau produit est ajouté en haut - au début - du tableau
+    setProducts([newProduct,...products]);
   };
 
-  const deleteProduct = (productId) => {
-    setProducts(products.filter((product) => product._id !== productId));
+  const deleteProduct = (productId) => { 
+    if (
+      !window.confirm("Are you sure you want to delete")
+    ) {
+      return;
+    }
+   
+     //faire le delete dans la BD
+     axios.delete(`${URL}articles/${productId}`)  
+     .then(res => { 
+         console.log(res.data); 
+              //faire le delete dans le tableau affiché
+         setProducts(products.filter((product) => product._id !== productId)); 
+     })
   };
 
-  const updateProduct = (updatedProduct) => {
+  const updateProduct = (updatedProduct) => { 
     setProducts(
       products.map((product) =>
-        product.id === updatedProduct._id ? updatedProduct : product
+        product._id === updatedProduct._id ? updatedProduct : product
       )
     );
-    setEditingProduct(null);
+   setEditingProduct(null);
+
   };
 
   return (
     <div>
-       
-      {editingProduct ? (
+      
+      {editingProduct  ? (
         <EditProduct
           scategories={scategories}
           product={editingProduct}

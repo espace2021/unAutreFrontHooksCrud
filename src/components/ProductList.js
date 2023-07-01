@@ -1,10 +1,10 @@
 import React from 'react';
 
 const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
-    const handleEditClick = (product) => {
+
+    const handleEditClick = (product) => { 
         setEditingProduct(product);
-        
-      };
+         };
   return (
     <div>
       <h2>Product List</h2>
@@ -13,7 +13,7 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
           {product.designation}
            - {product.marque}
           <button onClick={() => handleEditClick(product)}>Edit</button>
-          <button onClick={() => deleteProduct(product.id)}>Delete</button>
+          <button onClick={() => deleteProduct(product._id)}>Delete</button>
         </div>
       ))}
     </div>
