@@ -1,21 +1,41 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
 
 const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
-
-    const handleEditClick = (product) => { 
+    const handleEditClick = (product) => {
         setEditingProduct(product);
-         };
+        
+      };
   return (
     <div>
       <h2>Product List</h2>
-      {products.map((product,index) => (
-        <div key={index}>
-          {product.designation}
-           - {product.marque}
-          <button onClick={() => handleEditClick(product)}>Edit</button>
-          <button onClick={() => deleteProduct(product._id)}>Delete</button>
-        </div>
+      <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Référence</th>
+          <th>Désignation</th>
+          <th>Marque</th>
+          <th>Quantité Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {products.map((product) => (
+        <tr key={product._id}>
+          <td><img src= {product.imageart} width={100} height={100}/></td>
+        <td>{product.reference}</td>
+          <td>{product.designation}</td>
+          <td> {product.marque}</td>
+          <td>{product.qtestock}</td>
+          <td><Button variant="primary"  onClick={() => handleEditClick(product)}>Edit</Button>
+          <Button variant="danger" onClick={() => deleteProduct(product._id)}>Delete</Button></td>
+        
+        </tr>
       ))}
+      </tbody>
+      </Table>
     </div>
   );
 };
