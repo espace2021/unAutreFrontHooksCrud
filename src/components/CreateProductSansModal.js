@@ -6,8 +6,6 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import axios from "axios";
 
-import Modal from 'react-bootstrap/Modal';
-
 const CreateProduct = ({ addProduct, scategories }) => {
 
   const [reference, setReference] = useState("");
@@ -19,10 +17,6 @@ const CreateProduct = ({ addProduct, scategories }) => {
   const [scategorieID, setScategorieID] = useState("");
 
   const [validated, setValidated] = useState(false);
-
-const [show, setShow] = useState(false);
-const handleClose = () => setShow(false);
-const handleShow = () => setShow(true);
 
   const URL = "http://localhost:3001/api/"
 
@@ -56,9 +50,6 @@ console.log(response)
     setImageart('');
     setScategorieID('');
     setValidated(false);
-
-    handleClose()
-
   })   
   .catch(error=>{
     console.log(error)
@@ -77,23 +68,13 @@ const handleReset=()=>{
     setImageart('');
     setScategorieID('');
     setValidated(false);
-    handleClose()
 }
 
   return (
     <div>
-      
-      <Button className="btn btn-primary" style={{'margin':10,'left':10}}
-  onClick={handleShow}>
-  Nouveau
-  </Button>
-  <Modal show={show} onHide={handleClose}>
-
+      <h2>Create Product</h2>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
-  <Modal.Header closeButton>
-  <h2>Create Product</h2>
-  </Modal.Header>
-  <Modal.Body>
+ 
   <div className="container w-100 d-flex justify-content-center">
   <div>
   
@@ -195,13 +176,10 @@ value={scat._id}>{scat.nomscategorie}</option>
 </div>
 </div>
 </div>
-</Modal.Body>
-<Modal.Footer>
+
 <Button type="submit">Enregistrer</Button>
 <Button type="button" className="btn btn-warning" onClick={()=>handleReset()}>Annuler</Button>
-</Modal.Footer>
 </Form>
-</Modal>
     </div>
   );
 };

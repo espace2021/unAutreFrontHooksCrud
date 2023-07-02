@@ -6,6 +6,8 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import axios from "axios";
 
+import Modal from 'react-bootstrap/Modal';
+
 const EditProduct = ({ product, updateProduct ,scategories}) => {
 
   const [_id,setId] = useState();
@@ -28,11 +30,16 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
     setQtestock(product.qtestock);
     setImageart(product.imageart);
     setScategorieID(product.scategorieID._id);
+    setShow(true)
   }, [product]);
 
   useEffect(() => {
     fetchEditArticle();
   }, [fetchEditArticle]);
+
+const [show, setShow] = useState(true);
+const handleClose = () => setShow(false);
+const handleShow = () => setShow(true);
 
   const URL = "http://localhost:3001/api/"
 
@@ -59,7 +66,7 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
        //update dans le tableau affiché
        updateProduct(updatedProduct); 
         //vider le form
-      //  setId('')
+    
     setReference('');
     setDesignation('');
     setPrix('');
@@ -73,7 +80,10 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
       alert("Erreur ! Insertion non effectuée")
       })
     }
-    setValidated(true);   
+    setValidated(true); 
+    
+    handleClose()
+
   };
 
   const handleReset=()=>{
@@ -85,13 +95,24 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
       setImageart('');
       setScategorieID('');
       setValidated(false);
+
+      handleClose()
+
   }
 
   return (
     <div>
-      <h2>Edit Product</h2>
+     <Button className="btn btn-primary" style={{'margin':10,'left':10}}
+  onClick={handleShow}>
+  Nouveau
+  </Button>
+  <Modal show={show} onHide={handleClose}>
+
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
- 
+  <Modal.Header closeButton>
+  <h2>Edit Product</h2>
+  </Modal.Header>
+  <Modal.Body>
   <div className="container w-100 d-flex justify-content-center">
   <div>
   
@@ -193,10 +214,13 @@ value={scat._id}>{scat.nomscategorie}</option>
 </div>
 </div>
 </div>
-
+</Modal.Body>
+<Modal.Footer>
 <Button type="submit">Enregistrer</Button>
 <Button type="button" className="btn btn-warning" onClick={()=>handleReset()}>Annuler</Button>
+</Modal.Footer>
 </Form>
+</Modal>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -6,10 +6,9 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import axios from "axios";
 
-import Modal from 'react-bootstrap/Modal';
+const EditProduct = ({ product, updateProduct ,scategories}) => {
 
-const CreateProduct = ({ addProduct, scategories }) => {
-
+  const [_id,setId] = useState();
   const [reference, setReference] = useState("");
   const [designation, setDesignation] = useState("");
   const [prix, setPrix] = useState("");
@@ -20,17 +19,30 @@ const CreateProduct = ({ addProduct, scategories }) => {
 
   const [validated, setValidated] = useState(false);
 
-const [show, setShow] = useState(false);
-const handleClose = () => setShow(false);
-const handleShow = () => setShow(true);
+  const fetchEditArticle = useCallback(async () => {
+    setId(product._id)
+    setReference(product.reference);
+    setDesignation(product.designation);
+    setPrix(product.prix);
+    setMarque(product.marque);
+    setQtestock(product.qtestock);
+    setImageart(product.imageart);
+    setScategorieID(product.scategorieID._id);
+  }, [product]);
+
+  useEffect(() => {
+    fetchEditArticle();
+  }, [fetchEditArticle]);
 
   const URL = "http://localhost:3001/api/"
 
-  const handleSubmit = (e) => {
+   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-   if (form.checkValidity() === true) {
-    const newProduct = {
+    if (form.checkValidity() === true) {
+    const updatedProduct = {
+      ...product,
+      _id,
       reference,
       designation,
       prix, 
@@ -39,15 +51,15 @@ const handleShow = () => setShow(true);
       imageart,
       scategorieID
     };
-  
-//faire le add dans la BD
-axios.post(URL+"articles",newProduct)  
-.then(res => {  
-const response = res.data;  
-console.log(response)
-   // faire le add dans le tableau affiché
-    addProduct(newProduct);
-    //vider le form
+   
+     //update dans la BD
+     axios.put(URL + 'articles/' + product._id, updatedProduct)
+     .then(res => {  
+       console.log(res.data); 
+       //update dans le tableau affiché
+       updateProduct(updatedProduct); 
+        //vider le form
+      //  setId('')
     setReference('');
     setDesignation('');
     setPrix('');
@@ -56,44 +68,30 @@ console.log(response)
     setImageart('');
     setScategorieID('');
     setValidated(false);
+     }) .catch(error=>{
+      console.log(error)
+      alert("Erreur ! Insertion non effectuée")
+      })
+    }
+    setValidated(true);   
+  };
 
-    handleClose()
-
-  })   
-  .catch(error=>{
-    console.log(error)
-    alert("Erreur ! Insertion non effectuée")
-    })
+  const handleReset=()=>{
+    setReference('');
+      setDesignation('');
+      setPrix('');
+      setMarque('');
+      setQtestock('');
+      setImageart('');
+      setScategorieID('');
+      setValidated(false);
   }
-  setValidated(true);     
-}
-
-const handleReset=()=>{
-  setReference('');
-    setDesignation('');
-    setPrix('');
-    setMarque('');
-    setQtestock('');
-    setImageart('');
-    setScategorieID('');
-    setValidated(false);
-    handleClose()
-}
 
   return (
     <div>
-      
-      <Button className="btn btn-primary" style={{'margin':10,'left':10}}
-  onClick={handleShow}>
-  Nouveau
-  </Button>
-  <Modal show={show} onHide={handleClose}>
-
+      <h2>Edit Product</h2>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
-  <Modal.Header closeButton>
-  <h2>Create Product</h2>
-  </Modal.Header>
-  <Modal.Body>
+ 
   <div className="container w-100 d-flex justify-content-center">
   <div>
   
@@ -195,15 +193,12 @@ value={scat._id}>{scat.nomscategorie}</option>
 </div>
 </div>
 </div>
-</Modal.Body>
-<Modal.Footer>
+
 <Button type="submit">Enregistrer</Button>
 <Button type="button" className="btn btn-warning" onClick={()=>handleReset()}>Annuler</Button>
-</Modal.Footer>
 </Form>
-</Modal>
     </div>
   );
 };
 
-export default CreateProduct;
+export default EditProduct;
