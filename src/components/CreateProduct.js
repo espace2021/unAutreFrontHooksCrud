@@ -14,6 +14,8 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+
 const CreateProduct = ({ addProduct, scategories }) => {
 
   const [reference, setReference] = useState("");
@@ -93,7 +95,7 @@ const handleReset=()=>{
       
       <Button className="btn btn-primary" style={{'margin':10,'left':10}}
   onClick={handleShow}>
-  Nouveau
+  <AddCircleIcon /> Nouveau
   </Button>
   <Modal show={show} onHide={handleClose}>
 

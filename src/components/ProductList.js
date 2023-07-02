@@ -1,7 +1,10 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar  } from '@mui/x-data-grid';
-import Button from 'react-bootstrap/Button';
+
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
+
 
 const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
 
@@ -73,7 +76,12 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
           handleEditClick(params.row)
         };
   
-        return <Button onClick={onClick} className="btn btn-success">Edit</Button>;
+        return <span
+        onClick={onClick}
+            style={{ cursor: 'pointer'}}
+          >
+           <NoteAltOutlinedIcon color='success' />
+      </span>
       },
      
     },
@@ -86,7 +94,12 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
           deleteProduct(params.row._id)
         };
   
-        return <Button onClick={onClick} className="btn btn-danger">Delete</Button>;
+        return <span
+        onClick={onClick}
+           style={{ cursor: 'pointer'}}
+         >
+          <DeleteForeverRoundedIcon color='error' />
+         </span>
       },
    
     },
