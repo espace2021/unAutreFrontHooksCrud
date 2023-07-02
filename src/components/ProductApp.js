@@ -35,6 +35,7 @@ const ProductApp = () => {
       useEffect(() => {
         fetchArticles();
         fetchScategories();
+      
       }, [fetchArticles,fetchScategories]);
 
   const addProduct = (newProduct) => {

@@ -11,34 +11,34 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
   };
 
   const columns = [
-    {
+      {
       field: 'imageart',
       headerName: 'Image',
       width: 150,
       editable: true,
       renderCell: (params) => <img src={params.value} alt="" width="80" height="50" />,
-      valueGetter: (params) => params.row.imageart
+    
     },
     {
       field: 'reference',
       headerName: 'Référence',
       width: 150,
       editable: true,
-      valueGetter: (params) => params.row.reference
+     
     },
     {
       field: 'designation',
       headerName: 'Désignation',
       width: 250,
       editable: true,
-      valueGetter: (params) => params.row.designation
+    
     },
     {
       field: 'marque',
       headerName: 'Marque',
       width: 110,
       editable: true,
-      valueGetter: (params) => params.row.marque
+      
     },
     {
       field: 'prix',
@@ -46,7 +46,7 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
       type: 'number',
       width: 110,
       editable: true,
-      valueGetter: (params) => params.row.prix
+   
     },
     {
       field: 'qtestock',
@@ -54,7 +54,7 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
       type: 'number',
       width: 110,
       editable: true,
-      valueGetter: (params) => params.row.qtestock
+    
     },
     {
       field: 'scategorieID',
@@ -75,7 +75,7 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
   
         return <Button onClick={onClick} className="btn btn-success">Edit</Button>;
       },
-      valueGetter: (params) => params.row._id
+     
     },
     {
       field: "Delete",
@@ -88,18 +88,24 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
   
         return <Button onClick={onClick} className="btn btn-danger">Delete</Button>;
       },
-      valueGetter: (params) => params.row._id
+   
     },
     ];
   
-     
+    // une méthode qui ajoute un champ id numérique utile pour le filtre
+    // appelée dans getRowId
+    const handleGetRowId = () => {
+      products.map((row, index) => row["id"] = index);
+      return products.id;
+  }
+
   return (
     <div>
       <h2>Product List</h2>
       <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid 
         slots={{ toolbar: GridToolbar }}
-        getRowId={(row) => row._id}
+        getRowId={handleGetRowId()}
         rows={products}
         columns={columns}
         initialState={{
@@ -108,10 +114,11 @@ const ProductList = ({ products ,deleteProduct, setEditingProduct }) => {
               pageSize: 5,
             },
           },
-        }}
+          }}
         pageSizeOptions={[5]}
         checkboxSelection
         disableRowSelectionOnClick
+       
       />
     </Box>
     </div>
