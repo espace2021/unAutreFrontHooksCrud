@@ -82,7 +82,7 @@ const handleShow = () => setShow(true);
     setValidated(false);
      }) .catch(error=>{
       console.log(error)
-      alert("Erreur ! Insertion non effectuée")
+      alert("Erreur ! Modification non effectuée")
       })
     }
     setValidated(true); 
