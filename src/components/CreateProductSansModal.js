@@ -38,9 +38,9 @@ const CreateProduct = ({ addProduct, scategories }) => {
 axios.post(URL+"articles",newProduct)  
 .then(res => {  
 const response = res.data;  
-console.log(response)
+
    // faire le add dans le tableau affiché
-    addProduct(newProduct);
+    addProduct(response);
     //vider le form
     setReference('');
     setDesignation('');

@@ -55,9 +55,9 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
      //update dans la BD
      axios.put(URL + 'articles/' + product._id, updatedProduct)
      .then(res => {  
-       console.log(res.data); 
+     
        //update dans le tableau affiché
-       updateProduct(updatedProduct); 
+       updateProduct(res.data); 
         //vider le form
       //  setId('')
     setReference('');
