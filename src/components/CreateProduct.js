@@ -16,6 +16,16 @@ import Box from '@mui/material/Box';
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
+import {UploadFirebase} from '../utils/UploadFirebase';
+
+import { FilePond,registerPlugin } from 'react-filepond'
+import 'filepond/dist/filepond.min.css';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
+
 const CreateProduct = ({ addProduct, scategories }) => {
 
   const [reference, setReference] = useState("");
@@ -32,23 +42,23 @@ const [show, setShow] = useState(false);
 const handleClose = () => setShow(false);
 const handleShow = () => setShow(true);
 
+const [file, setFile] = useState("");
+
   const URL = "http://localhost:3001/api/"
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-   if (form.checkValidity() === true) {
-    const newProduct = {
+  const handleSubmit = (url) => {
+    
+      const newProduct = {
       reference,
       designation,
       prix, 
       marque,
       qtestock, 
-      imageart,
+      imageart:url,
       scategorieID
     };
   
-//faire le add dans la BD
+    //faire le add dans la BD
 axios.post(URL+"articles",newProduct)  
 .then(res => {  
 const response = res.data;  
@@ -64,6 +74,7 @@ const response = res.data;
     setImageart('');
     setScategorieID('');
     setValidated(false);
+    setFile("")
 
     handleClose()
 
@@ -72,8 +83,40 @@ const response = res.data;
     console.log(error)
     alert("Erreur ! Insertion non effectuée")
     })
-  }
-  setValidated(true);     
+ 
+   
+}
+
+const handleUpload = (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+ if (form.checkValidity() === true) {
+        if (!file[0].file) {
+            alert("Please upload an image first!");
+        }
+        else {
+          console.log(file[0].file)
+          resultHandleUpload(file[0].file,event);
+      }
+      if (!file[0].file) {
+        alert("Please upload an image first!");
+    }
+    }
+ setValidated(true);
+};
+
+const resultHandleUpload = async(file) => {
+  
+  try {
+   
+  const url =  await UploadFirebase(file);
+  console.log(url);
+
+  handleSubmit(url)
+ } catch (error) {
+    console.log(error);
+ }
+
 }
 
 const handleReset=()=>{
@@ -85,6 +128,7 @@ const handleReset=()=>{
     setImageart('');
     setScategorieID('');
     setValidated(false);
+    setFile('')
 
     handleClose()
 
@@ -99,7 +143,7 @@ const handleReset=()=>{
   </Button>
   <Modal show={show} onHide={handleClose}>
 
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+      <Form noValidate validated={validated} onSubmit={handleUpload}>
   <Modal.Header closeButton>
   <h2>Create Product</h2>
   </Modal.Header>
@@ -180,12 +224,14 @@ Qté stock Incorrect
 </Form.Group>
 <Form.Group as={Col} md="6">
 <Form.Label>Image</Form.Label>
-<Form.Control
-type="text"
-placeholder="Image"
-value={imageart}
-onChange={(e)=>setImageart(e.target.value)}
-/>
+<FilePond
+              files={file}
+              allowMultiple={false}
+              onupdatefiles={setFile}
+              labelIdle='<span class="filepond--label-action">Browse One</span>'
+            
+            />
+
 </Form.Group>
 <Form.Group as={Col} md="12">
 <Form.Label>S/Catégorie</Form.Label>

@@ -1,9 +1,10 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
+
 import axios from "axios";
 
 import Modal from 'react-bootstrap/Modal';
@@ -13,19 +14,10 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 
-import {UploadFirebase} from '../utils/UploadFirebase';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-import { FilePond,registerPlugin } from 'react-filepond'
-import 'filepond/dist/filepond.min.css';
-import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+const CreateProduct = ({ addProduct, scategories }) => {
 
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
-
-const EditProduct = ({ product, updateProduct ,scategories}) => {
-
-  const [_id,setId] = useState();
   const [reference, setReference] = useState("");
   const [designation, setDesignation] = useState("");
   const [prix, setPrix] = useState("");
@@ -36,53 +28,34 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
 
   const [validated, setValidated] = useState(false);
 
- 
-  const fetchEditArticle = useCallback(async () => {
-    setId(product._id)
-    setReference(product.reference);
-    setDesignation(product.designation);
-    setPrix(product.prix);
-    setMarque(product.marque);
-    setQtestock(product.qtestock);
-    setImageart(product.imageart);
-    setScategorieID(product.scategorieID._id);
-    setShow(true)
-  }, [product]);
-
-  useEffect(() => {
-    fetchEditArticle();
-  }, [fetchEditArticle]);
-
-const [show, setShow] = useState(true);
+const [show, setShow] = useState(false);
 const handleClose = () => setShow(false);
 const handleShow = () => setShow(true);
 
-const [file, setFile] = useState("");
-
   const URL = "http://localhost:3001/api/"
 
-   const handleSubmit = (url) => {
-    setImageart(url);
-    const updatedProduct = {
-      ...product,
-      _id,
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+   if (form.checkValidity() === true) {
+    const newProduct = {
       reference,
       designation,
       prix, 
       marque,
       qtestock, 
-      imageart:url,
+      imageart,
       scategorieID
     };
-   
-     //update dans la BD
-     axios.put(URL + 'articles/' + product._id, updatedProduct)
-     .then(res => {  
-       
-       //update dans le tableau affiché
-       updateProduct(res.data); 
-        //vider le form
-    
+  
+//faire le add dans la BD
+axios.post(URL+"articles",newProduct)  
+.then(res => {  
+const response = res.data;  
+
+   // faire le add dans le tableau affiché
+    addProduct(response);
+    //vider le form
     setReference('');
     setDesignation('');
     setPrix('');
@@ -91,73 +64,44 @@ const [file, setFile] = useState("");
     setImageart('');
     setScategorieID('');
     setValidated(false);
-    setFile("")
-     }) .catch(error=>{
-      console.log(error)
-      alert("Erreur ! Modification non effectuée")
-      })
-    
-    
+
     handleClose()
 
-  };
-
-  
-const handleUpload = (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
- if (form.checkValidity() === true) {
-  if (!file) {
-    const url = imageart;
-    handleSubmit(url);
+  })   
+  .catch(error=>{
+    console.log(error)
+    alert("Erreur ! Insertion non effectuée")
+    })
   }
-  else {
-    console.log(file[0].file)
-    resultHandleUpload(file[0].file);
- }
-    }
- setValidated(true);
-};
+  setValidated(true);     
+}
 
-const resultHandleUpload = async(file) => {
-  
-  try {
-   
-  const url =  await UploadFirebase(file);
-  console.log(url);
+const handleReset=()=>{
+  setReference('');
+    setDesignation('');
+    setPrix('');
+    setMarque('');
+    setQtestock('');
+    setImageart('');
+    setScategorieID('');
+    setValidated(false);
 
-  handleSubmit(url)
- } catch (error) {
-    console.log(error);
- }
+    handleClose()
 
 }
 
-  const handleReset=()=>{
-    setReference('');
-      setDesignation('');
-      setPrix('');
-      setMarque('');
-      setQtestock('');
-      setImageart('');
-      setScategorieID('');
-      setValidated(false);
-      setFile("")
-      handleClose()
-
-  }
-
   return (
     <div>
-     <Button className="btn btn-primary" style={{'margin':10,'left':10}}
+      
+      <Button className="btn btn-primary" style={{'margin':10,'left':10}}
   onClick={handleShow}>
-  Nouveau
+  <AddCircleIcon /> Nouveau
   </Button>
   <Modal show={show} onHide={handleClose}>
 
-      <Form noValidate validated={validated} onSubmit={handleUpload}>
+      <Form noValidate validated={validated} onSubmit={handleSubmit}>
   <Modal.Header closeButton>
-  <h2>Edit Product</h2>
+  <h2>Create Product</h2>
   </Modal.Header>
   <Modal.Body>
   <div className="container w-100 d-flex justify-content-center">
@@ -236,17 +180,16 @@ Qté stock Incorrect
 </Form.Group>
 <Form.Group as={Col} md="6">
 <Form.Label>Image</Form.Label>
-{!file?<img src={imageart} style={{width:50, height:50}}/> :null} 
-<FilePond
-              files={file}
-              allowMultiple={false}
-              onupdatefiles={setFile}
-              labelIdle='<span class="filepond--label-action">Browse One</span>'
-            
-            />
+<Form.Control
+type="text"
+placeholder="Image"
+value={imageart}
+onChange={(e)=>setImageart(e.target.value)}
+/>
 </Form.Group>
 <Form.Group as={Col} md="12">
 <Form.Label>S/Catégorie</Form.Label>
+
 <Box sx={{ minWidth: 400 }}>
 <Select sx={{ width: 400 }}
           label="S/Catégories"
@@ -285,4 +228,4 @@ value={scat._id}>
   );
 };
 
-export default EditProduct;
+export default CreateProduct;
