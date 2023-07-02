@@ -6,6 +6,23 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import axios from "axios";
 
+import Modal from 'react-bootstrap/Modal';
+
+import Grid from '@mui/material/Grid';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+
+import {UploadFirebase} from '../utils/UploadFirebase';
+
+import { FilePond,registerPlugin } from 'react-filepond'
+import 'filepond/dist/filepond.min.css';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
+
 const EditProduct = ({ product, updateProduct ,scategories}) => {
 
   const [_id,setId] = useState();
@@ -19,6 +36,7 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
 
   const [validated, setValidated] = useState(false);
 
+ 
   const fetchEditArticle = useCallback(async () => {
     setId(product._id)
     setReference(product.reference);
@@ -28,18 +46,23 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
     setQtestock(product.qtestock);
     setImageart(product.imageart);
     setScategorieID(product.scategorieID._id);
+    setShow(true)
   }, [product]);
 
   useEffect(() => {
     fetchEditArticle();
   }, [fetchEditArticle]);
 
-  const URL = "http://localhost:3001/api/"
+const [show, setShow] = useState(true);
+const handleClose = () => setShow(false);
+const handleShow = () => setShow(true);
 
-   const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    if (form.checkValidity() === true) {
+const [file, setFile] = useState("");
+
+  const URL = "https://backend-ecommerce-2023.vercel.app/api/"
+
+   const handleSubmit = (url) => {
+    setImageart(url);
     const updatedProduct = {
       ...product,
       _id,
@@ -48,18 +71,18 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
       prix, 
       marque,
       qtestock, 
-      imageart,
+      imageart:url,
       scategorieID
     };
    
      //update dans la BD
      axios.put(URL + 'articles/' + product._id, updatedProduct)
      .then(res => {  
-       console.log(res.data); 
+       
        //update dans le tableau affiché
-       updateProduct(updatedProduct); 
+       updateProduct(res.data); 
         //vider le form
-      //  setId('')
+    
     setReference('');
     setDesignation('');
     setPrix('');
@@ -68,13 +91,47 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
     setImageart('');
     setScategorieID('');
     setValidated(false);
+    setFile("")
      }) .catch(error=>{
       console.log(error)
-      alert("Erreur ! Insertion non effectuée")
+      alert("Erreur ! Modification non effectuée")
       })
-    }
-    setValidated(true);   
+    
+    
+    handleClose()
+
   };
+
+  
+const handleUpload = (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+ if (form.checkValidity() === true) {
+  if (!file) {
+    const url = imageart;
+    handleSubmit(url);
+  }
+  else {
+    console.log(file[0].file)
+    resultHandleUpload(file[0].file);
+ }
+    }
+ setValidated(true);
+};
+
+const resultHandleUpload = async(file) => {
+  
+  try {
+   
+  const url =  await UploadFirebase(file);
+  console.log(url);
+
+  handleSubmit(url)
+ } catch (error) {
+    console.log(error);
+ }
+
+}
 
   const handleReset=()=>{
     setReference('');
@@ -85,13 +142,24 @@ const EditProduct = ({ product, updateProduct ,scategories}) => {
       setImageart('');
       setScategorieID('');
       setValidated(false);
+      setFile("")
+      handleClose()
+
   }
 
   return (
     <div>
-      <h2>Edit Product</h2>
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
- 
+     <Button className="btn btn-primary" style={{'margin':10,'left':10}}
+  onClick={handleShow}>
+  Nouveau
+  </Button>
+  <Modal show={show} onHide={handleClose}>
+
+      <Form noValidate validated={validated} onSubmit={handleUpload}>
+  <Modal.Header closeButton>
+  <h2>Edit Product</h2>
+  </Modal.Header>
+  <Modal.Body>
   <div className="container w-100 d-flex justify-content-center">
   <div>
   
@@ -168,35 +236,51 @@ Qté stock Incorrect
 </Form.Group>
 <Form.Group as={Col} md="6">
 <Form.Label>Image</Form.Label>
-<Form.Control
-type="text"
-placeholder="Image"
-value={imageart}
-onChange={(e)=>setImageart(e.target.value)}
-/>
+{!file?<img src={imageart} style={{width:50, height:50}}/> :null} 
+<FilePond
+              files={file}
+              allowMultiple={false}
+              onupdatefiles={setFile}
+              labelIdle='<span class="filepond--label-action">Browse One</span>'
+            
+            />
 </Form.Group>
 <Form.Group as={Col} md="12">
 <Form.Label>S/Catégorie</Form.Label>
-<Form.Control
-as="select"
-type="select"
-value={scategorieID}
-onChange={(e)=>setScategorieID(e.target.value)}
->
-<option></option>
-{scategories.map((scat)=><option key={scat._id}
-value={scat._id}>{scat.nomscategorie}</option>
+<Box sx={{ minWidth: 400 }}>
+<Select sx={{ width: 400 }}
+          label="S/Catégories"
+          value={scategorieID}
+          onChange={(e)=>setScategorieID(e.target.value)}
+        >
+<MenuItem></MenuItem>
+{scategories.map((scat)=><MenuItem key={scat._id}
+value={scat._id}>
+  <Grid container spacing={2}>
+  <Grid item xs={6}>
+   <img src= {scat.imagescat} alt="" width="50" height="50" />
+  </Grid>
+  <Grid item xs={6}>
+    {scat.nomscategorie}
+  </Grid>
+</Grid>  
+</MenuItem>
 )}
-</Form.Control>
+
+</Select>
+</Box>
 </Form.Group>
 </Row>
 </div>
 </div>
 </div>
-
+</Modal.Body>
+<Modal.Footer>
 <Button type="submit">Enregistrer</Button>
 <Button type="button" className="btn btn-warning" onClick={()=>handleReset()}>Annuler</Button>
+</Modal.Footer>
 </Form>
+</Modal>
     </div>
   );
 };

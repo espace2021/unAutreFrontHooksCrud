@@ -11,7 +11,7 @@ const ProductApp = () => {
   const [editingProduct, setEditingProduct] = useState(null);
 
   
-  const URL = "http://localhost:3001/api/"
+  const URL = "https://backend-ecommerce-2023.vercel.app/api/"
 
   
    const fetchArticles = useCallback(async () => {
