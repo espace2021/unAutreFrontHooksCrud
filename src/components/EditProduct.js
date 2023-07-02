@@ -8,6 +8,11 @@ import axios from "axios";
 
 import Modal from 'react-bootstrap/Modal';
 
+import Grid from '@mui/material/Grid';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+
 const EditProduct = ({ product, updateProduct ,scategories}) => {
 
   const [_id,setId] = useState();
@@ -62,9 +67,9 @@ const handleShow = () => setShow(true);
      //update dans la BD
      axios.put(URL + 'articles/' + product._id, updatedProduct)
      .then(res => {  
-       console.log(res.data); 
+       
        //update dans le tableau affiché
-       updateProduct(updatedProduct); 
+       updateProduct(res.data); 
         //vider le form
     
     setReference('');
@@ -198,17 +203,28 @@ onChange={(e)=>setImageart(e.target.value)}
 </Form.Group>
 <Form.Group as={Col} md="12">
 <Form.Label>S/Catégorie</Form.Label>
-<Form.Control
-as="select"
-type="select"
-value={scategorieID}
-onChange={(e)=>setScategorieID(e.target.value)}
->
-<option></option>
-{scategories.map((scat)=><option key={scat._id}
-value={scat._id}>{scat.nomscategorie}</option>
+<Box sx={{ minWidth: 400 }}>
+<Select sx={{ width: 400 }}
+          label="S/Catégories"
+          value={scategorieID}
+          onChange={(e)=>setScategorieID(e.target.value)}
+        >
+<MenuItem></MenuItem>
+{scategories.map((scat)=><MenuItem key={scat._id}
+value={scat._id}>
+  <Grid container spacing={2}>
+  <Grid item xs={6}>
+   <img src= {scat.imagescat} alt="" width="50" height="50" />
+  </Grid>
+  <Grid item xs={6}>
+    {scat.nomscategorie}
+  </Grid>
+</Grid>  
+</MenuItem>
 )}
-</Form.Control>
+
+</Select>
+</Box>
 </Form.Group>
 </Row>
 </div>

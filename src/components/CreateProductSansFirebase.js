@@ -4,15 +4,9 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
-
 import axios from "axios";
 
 import Modal from 'react-bootstrap/Modal';
-
-import Grid from '@mui/material/Grid';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
 
 const CreateProduct = ({ addProduct, scategories }) => {
 
@@ -50,9 +44,9 @@ const handleShow = () => setShow(true);
 axios.post(URL+"articles",newProduct)  
 .then(res => {  
 const response = res.data;  
-
+console.log(response)
    // faire le add dans le tableau affiché
-    addProduct(response);
+    addProduct(newProduct);
     //vider le form
     setReference('');
     setDesignation('');
@@ -83,9 +77,7 @@ const handleReset=()=>{
     setImageart('');
     setScategorieID('');
     setValidated(false);
-
     handleClose()
-
 }
 
   return (
@@ -187,29 +179,17 @@ onChange={(e)=>setImageart(e.target.value)}
 </Form.Group>
 <Form.Group as={Col} md="12">
 <Form.Label>S/Catégorie</Form.Label>
-
-<Box sx={{ minWidth: 400 }}>
-<Select sx={{ width: 400 }}
-          label="S/Catégories"
-          value={scategorieID}
-          onChange={(e)=>setScategorieID(e.target.value)}
-        >
-<MenuItem></MenuItem>
-{scategories.map((scat)=><MenuItem key={scat._id}
-value={scat._id}>
-  <Grid container spacing={2}>
-  <Grid item xs={6}>
-   <img src= {scat.imagescat} alt="" width="50" height="50" />
-  </Grid>
-  <Grid item xs={6}>
-    {scat.nomscategorie}
-  </Grid>
-</Grid>  
-</MenuItem>
+<Form.Control
+as="select"
+type="select"
+value={scategorieID}
+onChange={(e)=>setScategorieID(e.target.value)}
+>
+<option></option>
+{scategories.map((scat)=><option key={scat._id}
+value={scat._id}>{scat.nomscategorie}</option>
 )}
-
-</Select>
-</Box>
+</Form.Control>
 </Form.Group>
 </Row>
 </div>
