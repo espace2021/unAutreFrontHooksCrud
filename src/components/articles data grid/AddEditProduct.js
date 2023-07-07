@@ -181,7 +181,7 @@ const resultHandleUpload = async(file) => {
   onClick={handleShow}>
       Nouveau 
   </Button>
-  <Modal show={show} onHide={handleClose}>
+  <Modal show={show} onHide={handleClose} style={{'marginTop':50}}>
 
       <Form noValidate validated={validated} onSubmit={handleUpload}>
   <Modal.Header closeButton>
