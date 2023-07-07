@@ -1,11 +1,11 @@
 import React, {useState, useEffect,useCallback} from 'react'
 import axios from 'axios'
 
-import ProductApp from './ProductApp'
+import ArticlesCardsAff from './ArticlesCardsAff'
 
 const FetchArticles = () => {
     
-    const URL = "http://localhost:3001/api/"
+    const URL = "https://backend-ecommerce-2023.vercel.app/api/"
 
     const [articles, setArticles] = useState([]);
 
@@ -23,7 +23,7 @@ const FetchArticles = () => {
       }, [fetchArticles]);
     
   return (
-  <ProductApp articles={articles}/> 
+  <ArticlesCardsAff articles={articles}/> 
   )
 }
 

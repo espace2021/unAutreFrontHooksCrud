@@ -16,7 +16,7 @@ import Box from '@mui/material/Box';
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-import {UploadFirebase} from '../utils/UploadFirebase';
+import {UploadFirebase} from '../../utils/UploadFirebase';
 
 import { FilePond,registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css';

@@ -13,7 +13,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 
-import {UploadFirebase} from '../utils/UploadFirebase';
+import {UploadFirebase} from '../../utils/UploadFirebase';
 
 import { FilePond,registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css';
