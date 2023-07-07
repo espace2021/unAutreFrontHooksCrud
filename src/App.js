@@ -7,12 +7,13 @@ import ArticlesCards from './components/articles/FetchArticles'
 function App() {
   return (
     <Router>
-      {/* <SideBar /> */}  
+     
       <Routes>
-        <Route path='/' element={<h1>root route "/"</h1>} /> 
-        <Route path="articlesCards" element={<ArticlesCards/>}/>
-        <Route path="articlesDataGrid" element={<Listarticles/>}/>
-        <Route path="categMaterialTab" element={<ListCategories/>}/> 
+        <Route path='/' element={ <SideBar />  } > 
+              <Route index path="/" element={<ArticlesCards/>}/>
+              <Route path="articlesDataGrid" element={<Listarticles/>}/>
+              <Route path="categMaterialTab" element={<ListCategories/>}/> 
+       </Route> 
       </Routes>
     </Router>
   );
