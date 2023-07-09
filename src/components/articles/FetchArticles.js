@@ -23,7 +23,13 @@ const FetchArticles = () => {
       }, [fetchArticles]);
     
   return (
-  <ArticlesCardsAff articles={articles}/> 
+    <div style={{"display":"flex","flexWrap":"wrap","justifyContent":"left"}}>
+    {articles.map((article) => (
+      <div  key={article._id}>
+  <ArticlesCardsAff article={article}/> 
+      </div>
+  ))}
+  </div>
   )
 }
 

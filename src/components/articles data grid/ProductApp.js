@@ -10,15 +10,13 @@ const ProductApp = () => {
   const [scategories, setScategories] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
 
-  
   const URL = "http://localhost:3001/api/"
 
-  
    const fetchArticles = useCallback(async () => {
         try {
           const response = await axios.get(URL+"articles"); 
           setProducts(response.data);
-        } catch (error) {
+           } catch (error) {
           console.error('Error fetching articles:', error);
         }
       }, []);

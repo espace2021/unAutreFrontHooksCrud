@@ -24,7 +24,7 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
 
 const EditProduct = ({ product, updateProduct ,scategories,addProduct}) => {
-
+  
   const [_id,setId] = useState();
   const [reference, setReference] = useState("");
   const [designation, setDesignation] = useState("");
@@ -61,7 +61,7 @@ const [file, setFile] = useState("");
 const URL = "http://localhost:3001/api/"
  
   const fetchEditArticle = useCallback(async () => {
-
+   
     setId(product._id)
     setReference(product.reference);
     setDesignation(product.designation);
@@ -71,7 +71,7 @@ const URL = "http://localhost:3001/api/"
     setImageart(product.imageart);
     setScategorieID(product.scategorieID._id);
     setShow(true);
-
+    console.log(product)
    }, [product]);
 
   useEffect(() => {
